@@ -22,5 +22,4 @@ public interface InceptionV4Factory {
 	 * @throws IOException In the event that the network cannot be loaded
 	 */
 	SupervisedFeedForwardNeuralNetwork createInceptionV4(FeedForwardNeuralNetworkContext context) throws IOException;
-
 }
