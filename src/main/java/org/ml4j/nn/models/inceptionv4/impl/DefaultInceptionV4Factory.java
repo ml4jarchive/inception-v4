@@ -1,3 +1,18 @@
+/*
+ * Copyright 2019 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.ml4j.nn.models.inceptionv4.impl;
 
 import java.io.IOException;
@@ -13,6 +28,7 @@ import org.ml4j.nn.components.PathCombinationStrategy;
 import org.ml4j.nn.components.builders.componentsgraph.Components3DGraphBuilderFactory;
 import org.ml4j.nn.components.builders.componentsgraph.InitialComponents3DGraphBuilder;
 import org.ml4j.nn.models.inceptionv4.InceptionV4Factory;
+import org.ml4j.nn.models.inceptionv4.InceptionV4Labels;
 import org.ml4j.nn.models.inceptionv4.InceptionV4WeightsLoader;
 import org.ml4j.nn.neurons.Neurons;
 import org.ml4j.nn.neurons.Neurons3D;
@@ -43,29 +59,44 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 	private float batchNormRegularisationLambda = 0;
 
 	private boolean withFreezeOut = false;
-	
-	public DefaultInceptionV4Factory(
-			Components3DGraphBuilderFactory components3DGraphBuilderFactory, 
-			DifferentiableActivationFunctionFactory activationFunctionFactory,
-			SupervisedFeedForwardNeuralNetworkFactory supervisedFeedForwardNeuralNetworkFactory) {
-		this(components3DGraphBuilderFactory, activationFunctionFactory, supervisedFeedForwardNeuralNetworkFactory, new DefaultUntrainedInceptionV4WeightsLoader());
-	}
-	
-	public DefaultInceptionV4Factory(
-			Components3DGraphBuilderFactory components3DGraphBuilderFactory, 
-			DifferentiableActivationFunctionFactory activationFunctionFactory,
-			SupervisedFeedForwardNeuralNetworkFactory supervisedFeedForwardNeuralNetworkFactory, ClassLoader classLoader) {
-		this(components3DGraphBuilderFactory, activationFunctionFactory, supervisedFeedForwardNeuralNetworkFactory, new PretrainedInceptionV4WeightsLoaderImpl(classLoader));
-	}
 		
+	private InceptionV4Labels labels;
+	
+	/**
+	 * Creates the default pre-trained InceptionV4 Networks
+	 * 
+	 * @param components3DGraphBuilderFactory
+	 * @param activationFunctionFactory
+	 * @param supervisedFeedForwardNeuralNetworkFactory
+	 * @param classLoader
+	 * @throws IOException
+	 */
 	public DefaultInceptionV4Factory(
 			Components3DGraphBuilderFactory components3DGraphBuilderFactory, 
 			DifferentiableActivationFunctionFactory activationFunctionFactory,
-			SupervisedFeedForwardNeuralNetworkFactory supervisedFeedForwardNeuralNetworkFactory, InceptionV4WeightsLoader weightsLoader) {
+			SupervisedFeedForwardNeuralNetworkFactory supervisedFeedForwardNeuralNetworkFactory, ClassLoader classLoader) throws IOException {
+		this(components3DGraphBuilderFactory, activationFunctionFactory, supervisedFeedForwardNeuralNetworkFactory, 
+				new PretrainedInceptionV4WeightsLoaderImpl(classLoader), new DefaultInceptionV4Labels(classLoader));
+	}
+	
+	/**
+	 * Creates InceptionV4 Networks with custom weights and labels
+	 * 
+	 * @param components3DGraphBuilderFactory
+	 * @param activationFunctionFactory
+	 * @param supervisedFeedForwardNeuralNetworkFactory
+	 * @param weightsLoader
+	 * @param labels
+	 */
+	public DefaultInceptionV4Factory(
+			Components3DGraphBuilderFactory components3DGraphBuilderFactory, 
+			DifferentiableActivationFunctionFactory activationFunctionFactory,
+			SupervisedFeedForwardNeuralNetworkFactory supervisedFeedForwardNeuralNetworkFactory, InceptionV4WeightsLoader weightsLoader, InceptionV4Labels labels) {
 		this.components3DGraphBuilderFactory = components3DGraphBuilderFactory;
 		this.activationFunctionFactory = activationFunctionFactory;
 		this.supervisedFeedForwardNeuralNetworkFactory = supervisedFeedForwardNeuralNetworkFactory;
 		this.weightsLoader = weightsLoader;
+		this.labels = labels;
 	}
 
 	@Override
@@ -1039,5 +1070,10 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 				.withConnectionToNeurons(new Neurons3D(8, 8, 256, false))
 				.withActivationFunction(activationFunctionFactory.createReluActivationFunction()).endPath()
 				.endParallelPaths(PathCombinationStrategy.FILTER_CONCAT);
+	}
+
+	@Override
+	public InceptionV4Labels createInceptionV4Labels() throws IOException {
+		return labels;
 	}
 }

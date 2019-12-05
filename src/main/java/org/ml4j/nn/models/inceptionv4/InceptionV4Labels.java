@@ -13,24 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.ml4j.nn.models.inceptionv4;
 
-import java.io.IOException;
-
-import org.ml4j.Matrix;
-import org.ml4j.MatrixFactory;
-
 /**
- * Interface for helper to load Inception V4 weights
+ * Interface for the labels for  Inception V4 Network
  * 
  * @author Michael Lavelle
- *
  */
-public interface InceptionV4WeightsLoader {
-	
-	Matrix getDenseLayerWeights(MatrixFactory matrixFactory, String name, int rows, int columns) throws IOException;
+public interface InceptionV4Labels {
 
-	Matrix getConvolutionalLayerWeights(MatrixFactory matrixFactory, String name, int width, int height, int inputDepth, int outputDepth) throws IOException;
-	
-	Matrix getBatchNormLayerWeights(MatrixFactory matrixFactory, String name, int inputDepth) throws IOException;
+	String getLabel(int labelIndex);
 }
