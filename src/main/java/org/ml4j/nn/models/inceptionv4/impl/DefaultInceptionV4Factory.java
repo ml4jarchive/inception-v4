@@ -20,9 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ml4j.nn.FeedForwardNeuralNetworkContext;
-import org.ml4j.nn.activationfunctions.DifferentiableActivationFunctionFactory;
-import org.ml4j.nn.components.ChainableDirectedComponent;
-import org.ml4j.nn.components.ChainableDirectedComponentActivation;
+import org.ml4j.nn.activationfunctions.factories.DifferentiableActivationFunctionFactory;
+import org.ml4j.nn.components.DefaultChainableDirectedComponent;
 import org.ml4j.nn.components.DirectedComponentsContext;
 import org.ml4j.nn.components.PathCombinationStrategy;
 import org.ml4j.nn.components.builders.componentsgraph.Components3DGraphBuilderFactory;
@@ -32,7 +31,6 @@ import org.ml4j.nn.models.inceptionv4.InceptionV4Labels;
 import org.ml4j.nn.models.inceptionv4.InceptionV4WeightsLoader;
 import org.ml4j.nn.neurons.Neurons;
 import org.ml4j.nn.neurons.Neurons3D;
-import org.ml4j.nn.neurons.NeuronsActivation;
 import org.ml4j.nn.supervised.SupervisedFeedForwardNeuralNetwork;
 import org.ml4j.nn.supervised.SupervisedFeedForwardNeuralNetworkFactory;
 import org.slf4j.Logger;
@@ -107,7 +105,7 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 
 		// Build the list of components in the Inception V4 Network - this will configure the trainingContext with 
 		// any component-specific configuration (eg. dropout, freezout, regularisation)
-		List<ChainableDirectedComponent<NeuronsActivation, ? extends ChainableDirectedComponentActivation<NeuronsActivation>, ?>> 
+		List<DefaultChainableDirectedComponent<?, ?>> 
 			allComponents = new ArrayList<>();
 		
 		// Add Stem components
@@ -866,7 +864,7 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 				.endParallelPaths(PathCombinationStrategy.FILTER_CONCAT);
 	}
 
-	public List<ChainableDirectedComponent<NeuronsActivation, ? extends ChainableDirectedComponentActivation<NeuronsActivation>, ?>> createTailComponents(
+	public List<DefaultChainableDirectedComponent<?, ?>> createTailComponents(
 			DirectedComponentsContext directedComponentsContext) throws IOException {
 		
 		return components3DGraphBuilderFactory.createInitialComponents3DGraphBuilder(new Neurons3D(8, 8, 1536, false))
