@@ -21,11 +21,11 @@ import java.util.List;
 
 import org.ml4j.nn.FeedForwardNeuralNetworkContext;
 import org.ml4j.nn.activationfunctions.factories.DifferentiableActivationFunctionFactory;
-import org.ml4j.nn.components.DefaultChainableDirectedComponent;
 import org.ml4j.nn.components.DirectedComponentsContext;
-import org.ml4j.nn.components.PathCombinationStrategy;
 import org.ml4j.nn.components.builders.componentsgraph.Components3DGraphBuilderFactory;
 import org.ml4j.nn.components.builders.componentsgraph.InitialComponents3DGraphBuilder;
+import org.ml4j.nn.components.manytoone.PathCombinationStrategy;
+import org.ml4j.nn.components.onetone.DefaultChainableDirectedComponent;
 import org.ml4j.nn.models.inceptionv4.InceptionV4Factory;
 import org.ml4j.nn.models.inceptionv4.InceptionV4Labels;
 import org.ml4j.nn.models.inceptionv4.InceptionV4WeightsLoader;
