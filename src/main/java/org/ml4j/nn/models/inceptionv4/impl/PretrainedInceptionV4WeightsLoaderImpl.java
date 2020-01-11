@@ -48,26 +48,28 @@ public class PretrainedInceptionV4WeightsLoaderImpl implements InceptionV4Weight
 		return new PretrainedInceptionV4WeightsLoaderImpl(classLoader);
 	}
 	
-	private float[] deserializeWeights(String name) throws IOException {
+	private float[] deserializeWeights(String name) {
 		LOGGER.debug("Derializing weights:" + name);
 		try {
 			return deserialize(float[].class, "inceptionv4javaweights", uid, name);
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 	}
 	
-	public Matrix getDenseLayerWeights(MatrixFactory matrixFactory, String name, int rows, int columns) throws IOException  {
+	public Matrix getDenseLayerWeights(MatrixFactory matrixFactory, String name, int rows, int columns)  {
 		float[] weights =  deserializeWeights(name);
 		return matrixFactory.createMatrixFromRowsByRowsArray(rows, columns, weights);
 	}
 
-	public Matrix getConvolutionalLayerWeights(MatrixFactory matrixFactory, String name, int width, int height, int inputDepth, int outputDepth) throws IOException {
+	public Matrix getConvolutionalLayerWeights(MatrixFactory matrixFactory, String name, int width, int height, int inputDepth, int outputDepth) {
 		float[] weights =  deserializeWeights(name);
 		return matrixFactory.createMatrixFromRowsByRowsArray(outputDepth, width * height * inputDepth, weights);
 	}
 	
-	public Matrix getBatchNormLayerWeights(MatrixFactory matrixFactory, String name, int inputDepth) throws IOException {
+	public Matrix getBatchNormLayerWeights(MatrixFactory matrixFactory, String name, int inputDepth)  {
 		float[] weights =  deserializeWeights(name);
 		return matrixFactory.createMatrixFromRowsByRowsArray(inputDepth, 1, weights);
 	}
