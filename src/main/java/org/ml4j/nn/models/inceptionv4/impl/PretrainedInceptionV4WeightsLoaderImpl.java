@@ -25,7 +25,7 @@ import java.io.Serializable;
 
 import org.ml4j.Matrix;
 import org.ml4j.MatrixFactory;
-import org.ml4j.nn.models.inceptionv4.InceptionV4WeightsLoader;
+import org.ml4j.nn.architectures.inception.inceptionv4.InceptionV4WeightsLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,16 +36,18 @@ public class PretrainedInceptionV4WeightsLoaderImpl implements InceptionV4Weight
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultInceptionV4Factory.class);
 		
+	private MatrixFactory matrixFactory;
 	private ClassLoader classLoader;
 	private long uid;
 	
-	public PretrainedInceptionV4WeightsLoaderImpl(ClassLoader classLoader) {
+	public PretrainedInceptionV4WeightsLoaderImpl(ClassLoader classLoader, MatrixFactory matrixFactory) {
 		this.uid = ObjectStreamClass.lookup(float[].class).getSerialVersionUID();
 		this.classLoader = classLoader;
+		this.matrixFactory = matrixFactory;
 	}
 	
-	public static PretrainedInceptionV4WeightsLoaderImpl getLoader(ClassLoader classLoader) {
-		return new PretrainedInceptionV4WeightsLoaderImpl(classLoader);
+	public static PretrainedInceptionV4WeightsLoaderImpl getLoader(MatrixFactory matrixFactory, ClassLoader classLoader) {
+		return new PretrainedInceptionV4WeightsLoaderImpl(classLoader, matrixFactory);
 	}
 	
 	private float[] deserializeWeights(String name) {
@@ -59,17 +61,17 @@ public class PretrainedInceptionV4WeightsLoaderImpl implements InceptionV4Weight
 		}
 	}
 	
-	public Matrix getDenseLayerWeights(MatrixFactory matrixFactory, String name, int rows, int columns)  {
+	public Matrix getDenseLayerWeights(String name, int rows, int columns)  {
 		float[] weights =  deserializeWeights(name);
 		return matrixFactory.createMatrixFromRowsByRowsArray(rows, columns, weights);
 	}
 
-	public Matrix getConvolutionalLayerWeights(MatrixFactory matrixFactory, String name, int width, int height, int inputDepth, int outputDepth) {
+	public Matrix getConvolutionalLayerWeights(String name, int width, int height, int inputDepth, int outputDepth) {
 		float[] weights =  deserializeWeights(name);
 		return matrixFactory.createMatrixFromRowsByRowsArray(outputDepth, width * height * inputDepth, weights);
 	}
 	
-	public Matrix getBatchNormLayerWeights(MatrixFactory matrixFactory, String name, int inputDepth)  {
+	public Matrix getBatchNormLayerWeights(String name, int inputDepth)  {
 		float[] weights =  deserializeWeights(name);
 		return matrixFactory.createMatrixFromRowsByRowsArray(inputDepth, 1, weights);
 	}
