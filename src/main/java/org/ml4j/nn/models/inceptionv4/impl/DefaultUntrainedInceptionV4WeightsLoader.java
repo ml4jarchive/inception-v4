@@ -16,8 +16,7 @@
 package org.ml4j.nn.models.inceptionv4.impl;
 
 import org.ml4j.Matrix;
-import org.ml4j.MatrixFactory;
-import org.ml4j.nn.models.inceptionv4.InceptionV4WeightsLoader;
+import org.ml4j.nn.architectures.inception.inceptionv4.InceptionV4WeightsLoader;
 
 /**
  * @author Michael Lavelle
@@ -25,18 +24,18 @@ import org.ml4j.nn.models.inceptionv4.InceptionV4WeightsLoader;
 public class DefaultUntrainedInceptionV4WeightsLoader implements InceptionV4WeightsLoader {
 
 	@Override
-	public Matrix getDenseLayerWeights(MatrixFactory matrixFactory, String name, int rows, int columns) {
+	public Matrix getDenseLayerWeights(String name, int rows, int columns) {
 		return null;
 	}
 
 	@Override
-	public Matrix getConvolutionalLayerWeights(MatrixFactory matrixFactory, String name, int width, int height,
+	public Matrix getConvolutionalLayerWeights(String name, int width, int height,
 			int inputDepth, int outputDepth) {
 		return null;
 	}
 
 	@Override
-	public Matrix getBatchNormLayerWeights(MatrixFactory matrixFactory, String name,
+	public Matrix getBatchNormLayerWeights(String name,
 			int inputDepth)  {
 		return null;
 	}
