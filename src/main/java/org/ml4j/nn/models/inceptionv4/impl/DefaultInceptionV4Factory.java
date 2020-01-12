@@ -19,7 +19,6 @@ import java.io.IOException;
 
 import org.ml4j.MatrixFactory;
 import org.ml4j.nn.FeedForwardNeuralNetworkContext;
-import org.ml4j.nn.activationfunctions.factories.DifferentiableActivationFunctionFactory;
 import org.ml4j.nn.architectures.inception.inceptionv4.InceptionV4Definition;
 import org.ml4j.nn.architectures.inception.inceptionv4.InceptionV4WeightsLoader;
 import org.ml4j.nn.components.builders.componentsgraph.Components3DGraphBuilderFactory;
@@ -39,9 +38,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultInceptionV4Factory implements InceptionV4Factory {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultInceptionV4Factory.class);
-	
-	private DifferentiableActivationFunctionFactory activationFunctionFactory;
-	
+		
 	private Components3DGraphBuilderFactory<DefaultChainableDirectedComponent<?, ?>> components3DGraphBuilderFactory;
 	
 	private SupervisedFeedForwardNeuralNetworkFactory supervisedFeedForwardNeuralNetworkFactory;
@@ -62,9 +59,8 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 	public DefaultInceptionV4Factory(
 			Components3DGraphBuilderFactory<DefaultChainableDirectedComponent<?, ?>> components3DGraphBuilderFactory, 
 			MatrixFactory matrixFactory, 
-			DifferentiableActivationFunctionFactory activationFunctionFactory,
 			SupervisedFeedForwardNeuralNetworkFactory supervisedFeedForwardNeuralNetworkFactory, ClassLoader classLoader) throws IOException {
-		this(components3DGraphBuilderFactory, activationFunctionFactory, supervisedFeedForwardNeuralNetworkFactory, 
+		this(components3DGraphBuilderFactory, supervisedFeedForwardNeuralNetworkFactory, 
 				new PretrainedInceptionV4WeightsLoaderImpl(classLoader, matrixFactory), new DefaultInceptionV4Labels(classLoader));
 	}
 	
@@ -78,11 +74,9 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 	 * @param labels
 	 */
 	public DefaultInceptionV4Factory(
-			Components3DGraphBuilderFactory<DefaultChainableDirectedComponent<?, ?>> components3DGraphBuilderFactory, 
-			DifferentiableActivationFunctionFactory activationFunctionFactory,
+			Components3DGraphBuilderFactory<DefaultChainableDirectedComponent<?, ?>> components3DGraphBuilderFactory,
 			SupervisedFeedForwardNeuralNetworkFactory supervisedFeedForwardNeuralNetworkFactory, InceptionV4WeightsLoader weightsLoader, InceptionV4Labels labels) {
 		this.components3DGraphBuilderFactory = components3DGraphBuilderFactory;
-		this.activationFunctionFactory = activationFunctionFactory;
 		this.supervisedFeedForwardNeuralNetworkFactory = supervisedFeedForwardNeuralNetworkFactory;
 		this.weightsLoader = weightsLoader;
 		this.labels = labels;
@@ -95,7 +89,7 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 		LOGGER.info("Creating Inception V4 Network...");
 
 		// Obtain the InceptionV4Definition from neural-network-architectures
-		InceptionV4Definition inceptionV4Definition = new InceptionV4Definition(activationFunctionFactory, weightsLoader);
+		InceptionV4Definition inceptionV4Definition = new InceptionV4Definition(weightsLoader);
 		
 		// Create a graph builder, starting with the input neurons for the InceptionV4Definition.
 		InitialComponents3DGraphBuilder<DefaultChainableDirectedComponent<?, ?>> graphBuilder = 
