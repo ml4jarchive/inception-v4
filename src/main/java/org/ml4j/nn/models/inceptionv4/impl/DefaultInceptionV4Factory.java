@@ -38,15 +38,15 @@ import org.slf4j.LoggerFactory;
 public class DefaultInceptionV4Factory implements InceptionV4Factory {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultInceptionV4Factory.class);
-		
+
 	private SessionFactory<DefaultChainableDirectedComponent<?, ?>> sessionFactory;
-	
+
 	private SupervisedFeedForwardNeuralNetworkFactory supervisedFeedForwardNeuralNetworkFactory;
-	
+
 	private InceptionV4WeightsLoader weightsLoader;
-		
+
 	private InceptionV4Labels labels;
-	
+
 	/**
 	 * Creates the default pre-trained InceptionV4 Networks
 	 * 
@@ -56,14 +56,15 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 	 * @param classLoader
 	 * @throws IOException
 	 */
-	public DefaultInceptionV4Factory(
-			SessionFactory<DefaultChainableDirectedComponent<?, ?>> sessionFactory, 
-			MatrixFactory matrixFactory, 
-			SupervisedFeedForwardNeuralNetworkFactory supervisedFeedForwardNeuralNetworkFactory, ClassLoader classLoader) throws IOException {
-		this(sessionFactory, supervisedFeedForwardNeuralNetworkFactory, 
-				new PretrainedInceptionV4WeightsLoaderImpl(classLoader, matrixFactory), new DefaultInceptionV4Labels(classLoader));
+	public DefaultInceptionV4Factory(SessionFactory<DefaultChainableDirectedComponent<?, ?>> sessionFactory,
+			MatrixFactory matrixFactory,
+			SupervisedFeedForwardNeuralNetworkFactory supervisedFeedForwardNeuralNetworkFactory,
+			ClassLoader classLoader) throws IOException {
+		this(sessionFactory, supervisedFeedForwardNeuralNetworkFactory,
+				new PretrainedInceptionV4WeightsLoaderImpl(classLoader, matrixFactory),
+				new DefaultInceptionV4Labels(classLoader));
 	}
-	
+
 	/**
 	 * Creates InceptionV4 Networks with custom weights and labels
 	 * 
@@ -73,9 +74,9 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 	 * @param weightsLoader
 	 * @param labels
 	 */
-	public DefaultInceptionV4Factory(
-			SessionFactory<DefaultChainableDirectedComponent<?, ?>> sessionFactory,
-			SupervisedFeedForwardNeuralNetworkFactory supervisedFeedForwardNeuralNetworkFactory, InceptionV4WeightsLoader weightsLoader, InceptionV4Labels labels) {
+	public DefaultInceptionV4Factory(SessionFactory<DefaultChainableDirectedComponent<?, ?>> sessionFactory,
+			SupervisedFeedForwardNeuralNetworkFactory supervisedFeedForwardNeuralNetworkFactory,
+			InceptionV4WeightsLoader weightsLoader, InceptionV4Labels labels) {
 		this.sessionFactory = sessionFactory;
 		this.supervisedFeedForwardNeuralNetworkFactory = supervisedFeedForwardNeuralNetworkFactory;
 		this.weightsLoader = weightsLoader;
@@ -85,17 +86,19 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 	@Override
 	public SupervisedFeedForwardNeuralNetwork createInceptionV4(FeedForwardNeuralNetworkContext trainingContext)
 			throws IOException {
-		
+
 		LOGGER.info("Creating Inception V4 Network...");
 
 		// Obtain the InceptionV4Definition from neural-network-architectures
 		InceptionV4Definition inceptionV4Definition = new InceptionV4Definition(weightsLoader);
-		
+
 		// Create a graph builder for the InceptionV4Definition and Training Context.
-		InitialComponentsGraphBuilder<DefaultChainableDirectedComponent<?, ?>> graphBuilder = 
-				sessionFactory.createSession(trainingContext.getDirectedComponentsContext()).startWith(inceptionV4Definition);
-			
-		// Create the component graph from the definition and graph builder, and wrap with a supervised feed forward neural network.
+		InitialComponentsGraphBuilder<DefaultChainableDirectedComponent<?, ?>> graphBuilder = sessionFactory
+				.createSession(trainingContext.getDirectedComponentsContext()).buildComponentGraph()
+				.startWith(inceptionV4Definition);
+
+		// Create the component graph from the definition and graph builder, and wrap
+		// with a supervised feed forward neural network.
 		return supervisedFeedForwardNeuralNetworkFactory
 				.createSupervisedFeedForwardNeuralNetwork(graphBuilder.getComponents());
 	}

@@ -34,25 +34,25 @@ import org.ml4j.nn.models.inceptionv4.InceptionV4Labels;
 public class DefaultInceptionV4Labels implements InceptionV4Labels {
 
 	private Map<Integer, String> classificationNamesByIndex;
-		
+
 	public DefaultInceptionV4Labels(ClassLoader classLoader) throws IOException {
 		classificationNamesByIndex = new HashMap<>();
 		try (InputStream is = classLoader.getResourceAsStream("inceptionv4classes.txt")) {
-			 int index = 0;
-			 try (Scanner scanner = new Scanner(is, StandardCharsets.UTF_8.name())) {
-			        while (scanner.useDelimiter("\n").hasNext()) {
-			        	classificationNamesByIndex.put(index, scanner.useDelimiter("\n").next());
-			        	index++;
-			        }
-			 }
-			 if (index != 1001) {
-				 throw new IllegalStateException("Inception V4 Classification Names Load Error");
-			 }
+			int index = 0;
+			try (Scanner scanner = new Scanner(is, StandardCharsets.UTF_8.name())) {
+				while (scanner.useDelimiter("\n").hasNext()) {
+					classificationNamesByIndex.put(index, scanner.useDelimiter("\n").next());
+					index++;
+				}
+			}
+			if (index != 1001) {
+				throw new IllegalStateException("Inception V4 Classification Names Load Error");
+			}
 		}
 	}
-	
+
 	public String getLabel(int labelIndex) {
-		String classificationName =  classificationNamesByIndex.get(labelIndex);
+		String classificationName = classificationNamesByIndex.get(labelIndex);
 		if (classificationName == null) {
 			throw new IllegalArgumentException("Index of:" + labelIndex + " is out of range");
 		}

@@ -29,14 +29,12 @@ public class DefaultUntrainedInceptionV4WeightsLoader implements InceptionV4Weig
 	}
 
 	@Override
-	public Matrix getConvolutionalLayerWeights(String name, int width, int height,
-			int inputDepth, int outputDepth) {
+	public Matrix getConvolutionalLayerWeights(String name, int width, int height, int inputDepth, int outputDepth) {
 		return null;
 	}
 
 	@Override
-	public Matrix getBatchNormLayerWeights(String name,
-			int inputDepth)  {
+	public Matrix getBatchNormLayerWeights(String name, int inputDepth) {
 		return null;
 	}
 

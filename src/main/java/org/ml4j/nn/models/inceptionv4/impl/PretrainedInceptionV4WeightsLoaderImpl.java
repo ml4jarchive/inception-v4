@@ -33,23 +33,24 @@ import org.slf4j.LoggerFactory;
  * @author Michael Lavelle
  */
 public class PretrainedInceptionV4WeightsLoaderImpl implements InceptionV4WeightsLoader {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(DefaultInceptionV4Factory.class);
-		
+
 	private MatrixFactory matrixFactory;
 	private ClassLoader classLoader;
 	private long uid;
-	
+
 	public PretrainedInceptionV4WeightsLoaderImpl(ClassLoader classLoader, MatrixFactory matrixFactory) {
 		this.uid = ObjectStreamClass.lookup(float[].class).getSerialVersionUID();
 		this.classLoader = classLoader;
 		this.matrixFactory = matrixFactory;
 	}
-	
-	public static PretrainedInceptionV4WeightsLoaderImpl getLoader(MatrixFactory matrixFactory, ClassLoader classLoader) {
+
+	public static PretrainedInceptionV4WeightsLoaderImpl getLoader(MatrixFactory matrixFactory,
+			ClassLoader classLoader) {
 		return new PretrainedInceptionV4WeightsLoaderImpl(classLoader, matrixFactory);
 	}
-	
+
 	private float[] deserializeWeights(String name) {
 		LOGGER.debug("Derializing weights:" + name);
 		try {
@@ -60,22 +61,22 @@ public class PretrainedInceptionV4WeightsLoaderImpl implements InceptionV4Weight
 			throw new RuntimeException(e);
 		}
 	}
-	
-	public Matrix getDenseLayerWeights(String name, int rows, int columns)  {
-		float[] weights =  deserializeWeights(name);
+
+	public Matrix getDenseLayerWeights(String name, int rows, int columns) {
+		float[] weights = deserializeWeights(name);
 		return matrixFactory.createMatrixFromRowsByRowsArray(rows, columns, weights);
 	}
 
 	public Matrix getConvolutionalLayerWeights(String name, int width, int height, int inputDepth, int outputDepth) {
-		float[] weights =  deserializeWeights(name);
+		float[] weights = deserializeWeights(name);
 		return matrixFactory.createMatrixFromRowsByRowsArray(outputDepth, width * height * inputDepth, weights);
 	}
-	
-	public Matrix getBatchNormLayerWeights(String name, int inputDepth)  {
-		float[] weights =  deserializeWeights(name);
+
+	public Matrix getBatchNormLayerWeights(String name, int inputDepth) {
+		float[] weights = deserializeWeights(name);
 		return matrixFactory.createMatrixFromRowsByRowsArray(inputDepth, 1, weights);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public <S extends Serializable> S deserialize(Class<S> clazz, String path, long uid, String id)
 			throws IOException, ClassNotFoundException {
