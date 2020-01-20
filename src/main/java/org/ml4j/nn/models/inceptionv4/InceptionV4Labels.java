@@ -17,7 +17,7 @@
 package org.ml4j.nn.models.inceptionv4;
 
 /**
- * Interface for the labels for  Inception V4 Network
+ * Interface for the labels for Inception V4 Network
  * 
  * @author Michael Lavelle
  */
