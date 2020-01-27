@@ -100,7 +100,7 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 		// Create the component graph from the definition and graph builder, and wrap
 		// with a supervised feed forward neural network.
 		return supervisedFeedForwardNeuralNetworkFactory
-				.createSupervisedFeedForwardNeuralNetwork(graphBuilder.getComponents());
+				.createSupervisedFeedForwardNeuralNetwork("inception_v4_network",graphBuilder.getComponents());
 	}
 
 	@Override
