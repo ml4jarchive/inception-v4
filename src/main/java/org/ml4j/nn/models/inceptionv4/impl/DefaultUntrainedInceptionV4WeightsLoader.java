@@ -15,26 +15,64 @@
  */
 package org.ml4j.nn.models.inceptionv4.impl;
 
+import java.util.Arrays;
+
 import org.ml4j.Matrix;
 import org.ml4j.nn.architectures.inception.inceptionv4.InceptionV4WeightsLoader;
+import org.ml4j.nn.axons.BiasMatrix;
+import org.ml4j.nn.axons.WeightsFormatImpl;
+import org.ml4j.nn.axons.WeightsMatrix;
+import org.ml4j.nn.axons.WeightsMatrixImpl;
+import org.ml4j.nn.axons.WeightsMatrixOrientation;
+import org.ml4j.nn.neurons.format.features.Dimension;
 
 /**
  * @author Michael Lavelle
  */
 public class DefaultUntrainedInceptionV4WeightsLoader implements InceptionV4WeightsLoader {
 
+	public WeightsMatrix getDenseLayerWeights(String name, int rows, int columns) {
+		return new WeightsMatrixImpl(null,
+				new WeightsFormatImpl(Arrays.asList(Dimension.INPUT_FEATURE), 
+						Arrays.asList(Dimension.OUTPUT_FEATURE), WeightsMatrixOrientation.ROWS_SPAN_OUTPUT_DIMENSIONS));
+	}
+
+	public WeightsMatrix getConvolutionalLayerWeights(String name, int width, int height, int inputDepth, int outputDepth) {
+		if (width == 1 && height == 1) {
+			return new WeightsMatrixImpl(null,
+					new WeightsFormatImpl(Arrays.asList(Dimension.INPUT_DEPTH), 
+							Arrays.asList(Dimension.OUTPUT_DEPTH), WeightsMatrixOrientation.ROWS_SPAN_OUTPUT_DIMENSIONS));
+		} else {
+			return new WeightsMatrixImpl(null,
+					new WeightsFormatImpl(Arrays.asList(Dimension.INPUT_DEPTH, Dimension.FILTER_HEIGHT, Dimension.FILTER_WIDTH), 
+							Arrays.asList(Dimension.OUTPUT_DEPTH), WeightsMatrixOrientation.ROWS_SPAN_OUTPUT_DIMENSIONS));
+		}
+	}
+
+	public WeightsMatrix getBatchNormLayerWeights(String name, int inputDepth) {
+		return new WeightsMatrixImpl(null,
+				new WeightsFormatImpl(Arrays.asList(
+						Dimension.INPUT_DEPTH), 
+						Arrays.asList(Dimension.OUTPUT_FEATURE), WeightsMatrixOrientation.ROWS_SPAN_OUTPUT_DIMENSIONS));
+	}
+
 	@Override
-	public Matrix getDenseLayerWeights(String name, int rows, int columns) {
+	public BiasMatrix getDenseLayerBiases(String name, int rows, int columns) {
 		return null;
 	}
 
 	@Override
-	public Matrix getConvolutionalLayerWeights(String name, int width, int height, int inputDepth, int outputDepth) {
+	public BiasMatrix getBatchNormLayerBiases(String name, int inputDepth) {
 		return null;
 	}
 
 	@Override
-	public Matrix getBatchNormLayerWeights(String name, int inputDepth) {
+	public Matrix getBatchNormLayerMean(String name, int inputDepth) {
+		return null;
+	}
+
+	@Override
+	public Matrix getBatchNormLayerVariance(String name, int inputDepth) {
 		return null;
 	}
 
