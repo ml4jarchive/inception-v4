@@ -22,10 +22,19 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 import java.io.Serializable;
+import java.util.Arrays;
 
 import org.ml4j.Matrix;
 import org.ml4j.MatrixFactory;
 import org.ml4j.nn.architectures.inception.inceptionv4.InceptionV4WeightsLoader;
+import org.ml4j.nn.axons.BiasFormatImpl;
+import org.ml4j.nn.axons.BiasMatrix;
+import org.ml4j.nn.axons.BiasMatrixImpl;
+import org.ml4j.nn.axons.WeightsFormatImpl;
+import org.ml4j.nn.axons.WeightsMatrix;
+import org.ml4j.nn.axons.WeightsMatrixImpl;
+import org.ml4j.nn.axons.WeightsMatrixOrientation;
+import org.ml4j.nn.neurons.format.features.Dimension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,19 +71,33 @@ public class PretrainedInceptionV4WeightsLoaderImpl implements InceptionV4Weight
 		}
 	}
 
-	public Matrix getDenseLayerWeights(String name, int rows, int columns) {
+	public WeightsMatrix getDenseLayerWeights(String name, int rows, int columns) {
 		float[] weights = deserializeWeights(name);
-		return matrixFactory.createMatrixFromRowsByRowsArray(rows, columns, weights);
+		return new WeightsMatrixImpl(matrixFactory.createMatrixFromRowsByRowsArray(rows, columns, weights),
+				new WeightsFormatImpl(Arrays.asList(Dimension.INPUT_FEATURE), 
+						Arrays.asList(Dimension.OUTPUT_FEATURE), WeightsMatrixOrientation.ROWS_SPAN_OUTPUT_DIMENSIONS));
 	}
 
-	public Matrix getConvolutionalLayerWeights(String name, int width, int height, int inputDepth, int outputDepth) {
+	public WeightsMatrix getConvolutionalLayerWeights(String name, int width, int height, int inputDepth, int outputDepth) {
 		float[] weights = deserializeWeights(name);
-		return matrixFactory.createMatrixFromRowsByRowsArray(outputDepth, width * height * inputDepth, weights);
+		boolean oneByOneConvolution = width == 1 && height == 1;
+		if (oneByOneConvolution) {
+			return new WeightsMatrixImpl(matrixFactory.createMatrixFromRowsByRowsArray(outputDepth, width * height * inputDepth, weights),
+					new WeightsFormatImpl(Arrays.asList(Dimension.INPUT_DEPTH), 
+							Arrays.asList(Dimension.OUTPUT_DEPTH), WeightsMatrixOrientation.ROWS_SPAN_OUTPUT_DIMENSIONS));
+		} else {
+			return new WeightsMatrixImpl(matrixFactory.createMatrixFromRowsByRowsArray(outputDepth, width * height * inputDepth, weights),
+					new WeightsFormatImpl(Arrays.asList(Dimension.INPUT_DEPTH, Dimension.FILTER_HEIGHT, Dimension.FILTER_WIDTH), 
+							Arrays.asList(Dimension.OUTPUT_DEPTH), WeightsMatrixOrientation.ROWS_SPAN_OUTPUT_DIMENSIONS));
+		}
 	}
 
-	public Matrix getBatchNormLayerWeights(String name, int inputDepth) {
+	public WeightsMatrix getBatchNormLayerWeights(String name, int inputDepth) {
 		float[] weights = deserializeWeights(name);
-		return matrixFactory.createMatrixFromRowsByRowsArray(inputDepth, 1, weights);
+		return new WeightsMatrixImpl(matrixFactory.createMatrixFromRowsByRowsArray(inputDepth, 1, weights),
+				new WeightsFormatImpl(Arrays.asList(
+						Dimension.INPUT_DEPTH), 
+						Arrays.asList(Dimension.OUTPUT_DEPTH), WeightsMatrixOrientation.ROWS_SPAN_OUTPUT_DIMENSIONS));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -96,5 +119,30 @@ public class PretrainedInceptionV4WeightsLoaderImpl implements InceptionV4Weight
 			}
 
 		}
+	}
+
+	@Override
+	public BiasMatrix getDenseLayerBiases(String name, int rows, int columns) {
+		float[] weights = deserializeWeights(name);
+		return new BiasMatrixImpl(matrixFactory.createMatrixFromRowsByRowsArray(rows, columns, weights));
+	}
+
+	@Override
+	public BiasMatrix getBatchNormLayerBiases(String name, int inputDepth) {
+		float[] weights = deserializeWeights(name);
+		return new BiasMatrixImpl(matrixFactory.createMatrixFromRowsByRowsArray(inputDepth, 1, weights),
+				new BiasFormatImpl(Arrays.asList(Dimension.INPUT_DEPTH), Arrays.asList(Dimension.OUTPUT_DEPTH), WeightsMatrixOrientation.ROWS_SPAN_OUTPUT_DIMENSIONS));
+	}
+
+	@Override
+	public Matrix getBatchNormLayerMean(String name, int inputDepth) {
+		float[] weights = deserializeWeights(name);
+		return matrixFactory.createMatrixFromRowsByRowsArray(inputDepth, 1, weights);
+	}
+
+	@Override
+	public Matrix getBatchNormLayerVariance(String name, int inputDepth) {
+		float[] weights = deserializeWeights(name);
+		return matrixFactory.createMatrixFromRowsByRowsArray(inputDepth, 1, weights);
 	}
 }

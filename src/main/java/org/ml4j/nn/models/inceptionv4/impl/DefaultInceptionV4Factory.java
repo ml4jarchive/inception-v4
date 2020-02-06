@@ -21,6 +21,12 @@ import org.ml4j.MatrixFactory;
 import org.ml4j.nn.FeedForwardNeuralNetworkContext;
 import org.ml4j.nn.architectures.inception.inceptionv4.InceptionV4Definition;
 import org.ml4j.nn.architectures.inception.inceptionv4.InceptionV4WeightsLoader;
+import org.ml4j.nn.architectures.inception.inceptionv4.InceptionV4WithoutTailDefinition;
+import org.ml4j.nn.architectures.inception.inceptionv4.UntrainedTailInceptionV4Definition;
+import org.ml4j.nn.architectures.inception.inceptionv4.modules.InceptionV4CustomTailDefinition;
+import org.ml4j.nn.axons.BiasMatrix;
+import org.ml4j.nn.axons.WeightsMatrix;
+import org.ml4j.nn.components.builders.componentsgraph.InitialComponents3DGraphBuilder;
 import org.ml4j.nn.components.builders.componentsgraph.InitialComponentsGraphBuilder;
 import org.ml4j.nn.components.onetone.DefaultChainableDirectedComponent;
 import org.ml4j.nn.models.inceptionv4.InceptionV4Factory;
@@ -30,6 +36,7 @@ import org.ml4j.nn.supervised.SupervisedFeedForwardNeuralNetwork;
 import org.ml4j.nn.supervised.SupervisedFeedForwardNeuralNetworkFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * Default factory for an Inception V4 Network.
@@ -94,6 +101,69 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 
 		// Create a graph builder for the InceptionV4Definition and Training Context.
 		InitialComponentsGraphBuilder<DefaultChainableDirectedComponent<?, ?>> graphBuilder = sessionFactory
+				.createSession(trainingContext.getDirectedComponentsContext()).buildComponentGraph()
+				.startWith(inceptionV4Definition);
+
+		// Create the component graph from the definition and graph builder, and wrap
+		// with a supervised feed forward neural network.
+		return supervisedFeedForwardNeuralNetworkFactory
+				.createSupervisedFeedForwardNeuralNetwork("inception_v4_network",graphBuilder.getComponents());
+	}
+	
+	@Override
+	public SupervisedFeedForwardNeuralNetwork createInceptionV4WithCustomTail(FeedForwardNeuralNetworkContext trainingContext, int outputNeurons,
+			WeightsMatrix weights, BiasMatrix bias)
+			throws IOException {
+
+		LOGGER.info("Creating Inception V4 Network...");
+
+		// Obtain the InceptionV4Definition from neural-network-architectures
+		UntrainedTailInceptionV4Definition inceptionV4Definition = new UntrainedTailInceptionV4Definition(
+				new DefaultUntrainedInceptionV4WeightsLoader(), weights, bias, outputNeurons);
+
+		// Create a graph builder for the InceptionV4Definition and Training Context.
+		InitialComponentsGraphBuilder<DefaultChainableDirectedComponent<?, ?>> graphBuilder = sessionFactory
+				.createSession(trainingContext.getDirectedComponentsContext()).buildComponentGraph()
+				.startWith(inceptionV4Definition);
+
+		// Create the component graph from the definition and graph builder, and wrap
+		// with a supervised feed forward neural network.
+		return supervisedFeedForwardNeuralNetworkFactory
+				.createSupervisedFeedForwardNeuralNetwork("inception_v4_network",graphBuilder.getComponents());
+	}
+	
+	@Override
+	public SupervisedFeedForwardNeuralNetwork createInceptionV4Tail(FeedForwardNeuralNetworkContext trainingContext,
+			int outputNeuronCount, WeightsMatrix weights, BiasMatrix biases)
+			throws IOException {
+
+		LOGGER.info("Creating Inception V4 Network...");
+
+		// Obtain the InceptionV4Definition from neural-network-architectures
+		InceptionV4CustomTailDefinition inceptionV4Definition = new InceptionV4CustomTailDefinition(outputNeuronCount, weights, biases);
+
+		// Create a graph builder for the InceptionV4Definition and Training Context.
+		InitialComponentsGraphBuilder<DefaultChainableDirectedComponent<?, ?>> graphBuilder = sessionFactory
+				.createSession(trainingContext.getDirectedComponentsContext()).buildComponentGraph()
+				.startWith(inceptionV4Definition);
+
+		// Create the component graph from the definition and graph builder, and wrap
+		// with a supervised feed forward neural network.
+		return supervisedFeedForwardNeuralNetworkFactory
+				.createSupervisedFeedForwardNeuralNetwork("inception_v4_network",graphBuilder.getComponents());
+	}
+	
+	@Override
+	public SupervisedFeedForwardNeuralNetwork createInceptionV4WithoutTail(FeedForwardNeuralNetworkContext trainingContext)
+			throws IOException {
+
+		LOGGER.info("Creating Inception V4 Network...");
+
+		// Obtain the InceptionV4Definition from neural-network-architectures
+		InceptionV4WithoutTailDefinition inceptionV4Definition = new InceptionV4WithoutTailDefinition(weightsLoader);
+
+		// Create a graph builder for the InceptionV4Definition and Training Context.
+		InitialComponents3DGraphBuilder<DefaultChainableDirectedComponent<?, ?>> graphBuilder = sessionFactory
 				.createSession(trainingContext.getDirectedComponentsContext()).buildComponentGraph()
 				.startWith(inceptionV4Definition);
 
