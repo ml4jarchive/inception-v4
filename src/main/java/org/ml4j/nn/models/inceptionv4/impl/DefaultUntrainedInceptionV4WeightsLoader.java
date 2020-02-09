@@ -31,6 +31,11 @@ import org.ml4j.nn.neurons.format.features.Dimension;
  */
 public class DefaultUntrainedInceptionV4WeightsLoader implements InceptionV4WeightsLoader {
 
+	/**
+	 * Default serialization id.
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public WeightsMatrix getDenseLayerWeights(String name, int rows, int columns) {
 		return new WeightsMatrixImpl(null,
 				new WeightsFormatImpl(Arrays.asList(Dimension.INPUT_FEATURE), 
