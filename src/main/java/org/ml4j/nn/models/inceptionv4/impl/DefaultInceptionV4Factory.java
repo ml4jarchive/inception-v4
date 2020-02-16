@@ -92,7 +92,7 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 		
 		return sessionFactory
 			.createSession(trainingContext.getDirectedComponentsContext())
-			.buildNeuralNetwork("inceptionV4", inceptionV4Definition.getInputNeurons())
+			.buildSupervised3DNeuralNetwork("inceptionV4", inceptionV4Definition.getInputNeurons())
 			.withComponentGraphDefinition(inceptionV4Definition)
 			.build();
 	}
@@ -112,7 +112,7 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 		
 		return sessionFactory
 				.createSession(trainingContext.getDirectedComponentsContext())
-				.buildNeuralNetwork("inceptionV4WithRegularisation", inceptionV4Definition.getInputNeurons())
+				.buildSupervised3DNeuralNetwork("inceptionV4WithRegularisation", inceptionV4Definition.getInputNeurons())
 				.withComponentGraphDefinition(inceptionV4Definition)
 				.build();
 		
@@ -132,7 +132,7 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 
 		return sessionFactory
 				.createSession(trainingContext.getDirectedComponentsContext())
-				.buildNeuralNetwork("inceptionV4WithCustomTail", inceptionV4Definition.getInputNeurons())
+				.buildSupervised3DNeuralNetwork("inceptionV4WithCustomTail", inceptionV4Definition.getInputNeurons())
 				.withComponentGraphDefinition(inceptionV4Definition)
 				.build();
 	}
@@ -149,7 +149,7 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 
 		return sessionFactory
 				.createSession(trainingContext.getDirectedComponentsContext())
-				.buildNeuralNetwork("inceptionV4CustomTail", inceptionV4Definition.getInputNeurons())
+				.buildSupervised3DNeuralNetwork("inceptionV4CustomTail", inceptionV4Definition.getInputNeurons())
 				.withComponentGraphDefinition(inceptionV4Definition)
 				.build();
 	}
@@ -165,7 +165,7 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 
 		return sessionFactory
 				.createSession(trainingContext.getDirectedComponentsContext())
-				.buildNeuralNetwork("inceptionV4CustomTail", inceptionV4Definition.getInputNeurons())
+				.buildSupervised3DNeuralNetwork("inceptionV4CustomTail", inceptionV4Definition.getInputNeurons())
 				.withComponentGraphDefinition(inceptionV4Definition)
 				.build();
 	}
