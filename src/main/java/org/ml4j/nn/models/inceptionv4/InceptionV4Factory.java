@@ -18,7 +18,7 @@ package org.ml4j.nn.models.inceptionv4;
 import java.io.IOException;
 
 import org.ml4j.nn.FeedForwardNeuralNetworkContext;
-import org.ml4j.nn.axons.BiasMatrix;
+import org.ml4j.nn.axons.BiasVector;
 import org.ml4j.nn.axons.WeightsMatrix;
 import org.ml4j.nn.supervised.SupervisedFeedForwardNeuralNetwork;
 
@@ -69,7 +69,7 @@ public interface InceptionV4Factory {
 	 * @return An inception V4 Network
 	 * @throws IOException In the event that the network cannot be loaded
 	 */
-	SupervisedFeedForwardNeuralNetwork createInceptionV4WithCustomTail(FeedForwardNeuralNetworkContext context, int outputFeatures, WeightsMatrix weights, BiasMatrix biases,
+	SupervisedFeedForwardNeuralNetwork createInceptionV4WithCustomTail(FeedForwardNeuralNetworkContext context, int outputFeatures, WeightsMatrix weights, BiasVector biases,
 			float regularisationLambda, float dropoutKeepProbability) throws IOException;
 	
 	
@@ -87,7 +87,7 @@ public interface InceptionV4Factory {
 	 * @return An inception V4 Network
 	 * @throws IOException In the event that the network cannot be loaded
 	 */
-	SupervisedFeedForwardNeuralNetwork createInceptionV4Tail(FeedForwardNeuralNetworkContext context, int outputNeuronCount, WeightsMatrix weights, BiasMatrix biases,
+	SupervisedFeedForwardNeuralNetwork createInceptionV4Tail(FeedForwardNeuralNetworkContext context, int outputNeuronCount, WeightsMatrix weights, BiasVector biases,
 			float regularisationLambda, float dropoutKeepProbability) throws IOException;
 	
 	
