@@ -24,7 +24,7 @@ import org.ml4j.nn.architectures.inception.inceptionv4.InceptionV4WeightsLoader;
 import org.ml4j.nn.architectures.inception.inceptionv4.InceptionV4WithoutTailDefinition;
 import org.ml4j.nn.architectures.inception.inceptionv4.UntrainedTailInceptionV4Definition;
 import org.ml4j.nn.architectures.inception.inceptionv4.modules.InceptionV4CustomTailDefinition;
-import org.ml4j.nn.axons.BiasMatrix;
+import org.ml4j.nn.axons.BiasVector;
 import org.ml4j.nn.axons.WeightsMatrix;
 import org.ml4j.nn.models.inceptionv4.InceptionV4Factory;
 import org.ml4j.nn.models.inceptionv4.InceptionV4Labels;
@@ -120,7 +120,7 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 	
 	@Override
 	public SupervisedFeedForwardNeuralNetwork createInceptionV4WithCustomTail(FeedForwardNeuralNetworkContext trainingContext, int outputNeurons,
-			WeightsMatrix weights, BiasMatrix bias, float regularisationLambda, float dropoutKeepProbability)
+			WeightsMatrix weights, BiasVector bias, float regularisationLambda, float dropoutKeepProbability)
 			throws IOException {
 
 		LOGGER.info("Creating Inception V4 Network...");
@@ -139,7 +139,7 @@ public class DefaultInceptionV4Factory implements InceptionV4Factory {
 	
 	@Override
 	public SupervisedFeedForwardNeuralNetwork createInceptionV4Tail(FeedForwardNeuralNetworkContext trainingContext,
-			int outputNeuronCount, WeightsMatrix weights, BiasMatrix biases, float regularisationLambda, float dropoutKeepProbability)
+			int outputNeuronCount, WeightsMatrix weights, BiasVector biases, float regularisationLambda, float dropoutKeepProbability)
 			throws IOException {
 
 		LOGGER.info("Creating Inception V4 Network...");

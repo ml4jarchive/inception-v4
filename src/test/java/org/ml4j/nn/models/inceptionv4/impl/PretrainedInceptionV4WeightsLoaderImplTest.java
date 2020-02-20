@@ -48,9 +48,9 @@ public class PretrainedInceptionV4WeightsLoaderImplTest {
 		
 		Assert.assertEquals(WeightsMatrixOrientation.ROWS_SPAN_OUTPUT_DIMENSIONS, weightsMatrix.getFormat().getOrientation());
 		
-		Assert.assertNotNull(weightsMatrix.getWeights());
+		Assert.assertNotNull(weightsMatrix.getMatrix());
 		
-		Assert.assertEquals(mockMatrix, weightsMatrix.getWeights());
+		Assert.assertEquals(mockMatrix, weightsMatrix.getMatrix());
 
 	}
 }

@@ -24,17 +24,22 @@ import java.io.ObjectStreamClass;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import org.ml4j.Matrix;
 import org.ml4j.MatrixFactory;
 import org.ml4j.nn.architectures.inception.inceptionv4.InceptionV4WeightsLoader;
 import org.ml4j.nn.axons.BiasFormatImpl;
-import org.ml4j.nn.axons.BiasMatrix;
-import org.ml4j.nn.axons.BiasMatrixImpl;
+import org.ml4j.nn.axons.BiasVector;
+import org.ml4j.nn.axons.BiasVectorImpl;
+import org.ml4j.nn.axons.FeaturesVector;
+import org.ml4j.nn.axons.FeaturesVectorFormat;
+import org.ml4j.nn.axons.FeaturesVectorFormatImpl;
+import org.ml4j.nn.axons.FeaturesVectorImpl;
+import org.ml4j.nn.axons.FeaturesVectorOrientation;
 import org.ml4j.nn.axons.WeightsFormatImpl;
 import org.ml4j.nn.axons.WeightsMatrix;
 import org.ml4j.nn.axons.WeightsMatrixImpl;
 import org.ml4j.nn.axons.WeightsMatrixOrientation;
 import org.ml4j.nn.neurons.format.features.Dimension;
+import org.ml4j.nn.neurons.format.features.DimensionScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,27 +132,31 @@ public class PretrainedInceptionV4WeightsLoaderImpl implements InceptionV4Weight
 	}
 
 	@Override
-	public BiasMatrix getDenseLayerBiases(String name, int rows, int columns) {
+	public BiasVector getDenseLayerBiases(String name, int rows, int columns) {
 		float[] weights = deserializeWeights(name);
-		return new BiasMatrixImpl(matrixFactory.createMatrixFromRowsByRowsArray(rows, columns, weights));
+		return new BiasVectorImpl(matrixFactory.createMatrixFromRowsByRowsArray(rows, columns, weights),
+				FeaturesVectorFormat.DEFAULT_BIAS_FORMAT);
 	}
 
 	@Override
-	public BiasMatrix getBatchNormLayerBiases(String name, int inputDepth) {
+	public BiasVector getBatchNormLayerBiases(String name, int outputDepth) {
 		float[] weights = deserializeWeights(name);
-		return new BiasMatrixImpl(matrixFactory.createMatrixFromRowsByRowsArray(inputDepth, 1, weights),
-				new BiasFormatImpl(Arrays.asList(Dimension.INPUT_DEPTH), Arrays.asList(Dimension.OUTPUT_DEPTH), WeightsMatrixOrientation.ROWS_SPAN_OUTPUT_DIMENSIONS));
+		return new BiasVectorImpl(matrixFactory.createMatrixFromRowsByRowsArray(outputDepth, 1, weights),
+				new BiasFormatImpl(Dimension.OUTPUT_DEPTH, FeaturesVectorOrientation.COLUMN_VECTOR));
 	}
 
 	@Override
-	public Matrix getBatchNormLayerMean(String name, int inputDepth) {
+	public FeaturesVector getBatchNormLayerMean(String name, int outputDepth) {
 		float[] weights = deserializeWeights(name);
-		return matrixFactory.createMatrixFromRowsByRowsArray(inputDepth, 1, weights);
+		return new FeaturesVectorImpl(matrixFactory.createMatrixFromRowsByRowsArray(outputDepth, 1, weights), new FeaturesVectorFormatImpl(Arrays.asList(Dimension.OUTPUT_DEPTH),
+				FeaturesVectorOrientation.COLUMN_VECTOR, DimensionScope.OUTPUT));
 	}
 
 	@Override
-	public Matrix getBatchNormLayerVariance(String name, int inputDepth) {
+	public FeaturesVector getBatchNormLayerVariance(String name, int outputDepth) {
 		float[] weights = deserializeWeights(name);
-		return matrixFactory.createMatrixFromRowsByRowsArray(inputDepth, 1, weights);
+		return new FeaturesVectorImpl( matrixFactory.createMatrixFromRowsByRowsArray(outputDepth, 1, weights), new FeaturesVectorFormatImpl(Arrays.asList(Dimension.OUTPUT_DEPTH),
+				FeaturesVectorOrientation.COLUMN_VECTOR, DimensionScope.OUTPUT));
 	}
+	
 }
